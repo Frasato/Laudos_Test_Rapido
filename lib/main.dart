@@ -1,7 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:laudos_shalom/screens/form_covid.dart';
+import 'package:laudos_shalom/screens/form_dengue.dart';
 import 'package:laudos_shalom/screens/home.dart';
+import 'package:window_manager/window_manager.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await windowManager.ensureInitialized();
+
+  WindowOptions windowOptions = WindowOptions(
+    size: Size(800, 600),
+    center: true,
+    minimumSize: Size(800, 600),
+    maximumSize: Size(800, 600),
+    skipTaskbar: false,
+    titleBarStyle: TitleBarStyle.normal,
+  );
+
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+  });
+
   runApp(const MyApp());
 }
 
@@ -18,7 +38,9 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/home',
       routes: {
-        '/login': (context) => const Home(),
+        '/home': (context) => const Home(),
+        '/covid': (context) => const FormCovid(),
+        '/dengue': (context) => const FormDengue()
       },
     );
   }
