@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -28,6 +29,8 @@ class _FormDengueState extends State<FormDengue> {
   final TextEditingController _responsavelController = TextEditingController();
   final TextEditingController _crfController = TextEditingController();
 
+  final _dateMaskFormatter = MaskTextInputFormatter(mask: '##/##/####', filter: {'#': RegExp(r'[0-9]')});
+
   String _sexo = 'Masculino';
   bool _detectavel = false;
 
@@ -48,6 +51,13 @@ class _FormDengueState extends State<FormDengue> {
     _responsavelController.dispose();
     _crfController.dispose();
     super.dispose();
+  }
+
+  String _formatterDate(String date){
+    if(date.length == 8){
+      return '${date.substring(0, 2)}/${date.substring(2, 4)}/${date.substring(4, 8)}';
+    }
+    return date;
   }
 
   Future<pw.Document> _generatePdf() async {
@@ -79,7 +89,7 @@ class _FormDengueState extends State<FormDengue> {
 
               pw.Text('Paciente: ${_nomeController.text}'),
               pw.SizedBox(height: 10),
-              pw.Text('Data Nascimento: ${_nascimentoController.text}'),
+              pw.Text('Data Nascimento: ${_formatterDate(_nascimentoController.text)}'),
               pw.SizedBox(height: 10),
               pw.Text('Sexo: $_sexo'),
               pw.SizedBox(height: 10),
@@ -92,13 +102,15 @@ class _FormDengueState extends State<FormDengue> {
               pw.Text('Bairro: ${_bairroController.text}'),
               pw.SizedBox(height: 10),
               pw.Text('Município: ${_municipioController.text}'),
+              pw.SizedBox(height: 10),
+              pw.Text('Assinatura Paciente: ____________________'),
               pw.SizedBox(height: 25),
 
               pw.Text('Método: Imunocromatografia'),
               pw.SizedBox(height: 10),
               pw.Text('Amostra: Sangue Total'),
               pw.SizedBox(height: 10),
-              pw.Text('Data da Coleta: ${_dataColetaController.text}'),
+              pw.Text('Data da Coleta: ${_formatterDate(_dataColetaController.text)}'),
               pw.SizedBox(height: 10),
               pw.Text('Lote: ${_loteController.text}'),
               pw.SizedBox(height: 10),
@@ -109,8 +121,6 @@ class _FormDengueState extends State<FormDengue> {
               pw.Text('Detectável: ${_detectavel ? "Sim" : "Não"}'),
               pw.SizedBox(height: 25),
 
-              pw.Text('Assinatura Paciente: ____________________'),
-              pw.SizedBox(height: 25),
               pw.Text('_______________________________________________ Data: ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}'),
               pw.SizedBox(height: 10),
               pw.Text('Responsável Técnico: ${_responsavelController.text} CRF: ${_crfController.text}'),
@@ -197,6 +207,7 @@ class _FormDengueState extends State<FormDengue> {
                   controller: _nascimentoController,
                   decoration: const InputDecoration(
                       labelText: 'Data de Nascimento', border: OutlineInputBorder()),
+                  inputFormatters: [_dateMaskFormatter],
                 ),
                 const SizedBox(height: 10),
                 DropdownButtonFormField<String>(
@@ -257,6 +268,7 @@ class _FormDengueState extends State<FormDengue> {
                   controller: _dataColetaController,
                   decoration: const InputDecoration(
                       labelText: 'Data da Coleta', border: OutlineInputBorder()),
+                  inputFormatters: [_dateMaskFormatter],
                 ),
                 const SizedBox(height: 10),
                 TextField(
