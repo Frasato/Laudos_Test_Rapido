@@ -22,6 +22,8 @@ void main() async{
     await windowManager.focus();
   });
 
+  windowManager.setTitle("Laudos Shalom");
+
   runApp(const MyApp());
 }
 
